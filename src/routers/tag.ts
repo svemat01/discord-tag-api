@@ -14,5 +14,24 @@ tagRouter.get('/:userId', async (req, res) => {
     }
 
     const tag = await getTag(req.params.userId);
-    res.send(tag ?? 'No user found with that ID');
+
+    switch (tag.status) {
+        case 'found':
+            res.send(tag.tag);
+            break;
+        
+        case 'not found':
+            res.status(404);
+            res.send('Not found');
+            break;
+
+        case 'error':
+            res.status(500);
+            res.send('Error');
+    
+        default:
+            res.status(500);
+            res.send('Bad Status');
+            break;
+    }
 });
