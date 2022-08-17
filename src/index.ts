@@ -11,6 +11,7 @@ export const GLOBALS = {
     DISCORD_TOKEN: process.env.DISCORD_TOKEN!,
     REDIS_URL: process.env.REDIS_URL!,
     TAG_TTL: process.env.TAG_TTL ? parseInt(process.env.TAG_TTL) : 24 * 60 * 60,
+    DEBUG: process.env.DEBUG === "true",
 };
 const requiredGlobals: (keyof typeof GLOBALS)[] = [
     "DISCORD_TOKEN",
@@ -32,6 +33,13 @@ export const discordREST = new REST({ version: "10" }).setToken(
 );
 
 const app = express();
+
+if (GLOBALS.DEBUG) {
+    app.use((req, res, next) => {
+        console.log(`${req.method} ${req.url}`, req.headers);
+        next();
+    });
+}
 
 app.get("/", function (req, res) {
     res.send("Hello World");
